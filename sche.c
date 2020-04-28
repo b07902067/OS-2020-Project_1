@@ -31,6 +31,11 @@ int main(){
         rc_process[i][0] = in_[i].ready_time;
         rc_process[i][1] = in_[i].exec_time;
     }
+    cpu_set_t mask;
+    CPU_ZERO(&mask);
+    CPU_SET(1 , &mask);
+    sched_setaffinity(0, sizeof(cpu_set_t), &mask);
+    
     if(strcmp(policy , "FIFO") == 0) FIFO();
     if(strcmp(policy , "RR") == 0) RR();
     if(strcmp(policy , "SJF") == 0) SJF();
@@ -55,6 +60,10 @@ void RR(){
                         exit(0);
                     }
                     else {
+                        cpu_set_t mask;
+                        CPU_ZERO(&mask);
+                        CPU_SET(0 , &mask);
+                        sched_setaffinity(pid_child[i], sizeof(cpu_set_t), &mask);
                         idle_it(pid_child[i]);
                         if(head == NULL) start_head(i);
                         else {
@@ -80,6 +89,7 @@ void RR(){
                 head = head -> next;
             }
             else {
+                idle_it(head -> pid);
                 head -> next_stop = (head->rest_time > 500)?(head->rest_time-500):0;
                 if(head -> next != NULL){
                     tail -> next = head;
@@ -94,7 +104,6 @@ void RR(){
         }
         if(head) run_it(head->pid);
         timeunit();
-        if(head) idle_it(head -> pid);
         time_of_main ++;
         if(head != NULL)head -> rest_time --;
         //if(head != NULL)fprintf(stdout , "%d now!\n" , head -> pid);
@@ -107,7 +116,7 @@ void RR(){
 void FIFO(){
 
     while(1){
-    	/*struct sched_param param;
+        /*struct sched_param param;
         param.sched_priority = sched_get_priority_max(SCHED_FIFO);
         int set = sched_setscheduler(0 , SCHED_OTHER , &param);*/
 
@@ -124,12 +133,16 @@ void FIFO(){
                     exit(0);
                 }
                 else {
+                    cpu_set_t mask;
+                    CPU_ZERO(&mask);
+                    CPU_SET(0 , &mask);
+                    sched_setaffinity(pid_child[i], sizeof(cpu_set_t), &mask);
                     if(head == NULL) {
-                    	start_head(i);
+                        start_head(i);
                         run_it(head->pid);
                     }
                     else {
-                    	idle_it(pid_child[i]);
+                        idle_it(pid_child[i]);
                         tail -> next = malloc(sizeof(P));
                         (tail -> next) -> previous = tail;
                         tail = tail -> next;
@@ -174,6 +187,10 @@ void SJF(){
                         exit(0);
                     }
                     else {
+                        cpu_set_t mask;
+                        CPU_ZERO(&mask);
+                        CPU_SET(0 , &mask);
+                        sched_setaffinity(pid_child[i], sizeof(cpu_set_t), &mask);
                         idle_it(pid_child[i]);
                         if(head == NULL) start_head(i);
                         else insert_new_job(i);
@@ -191,7 +208,6 @@ void SJF(){
         }
         if(head) run_it(head->pid);
         timeunit();
-        if(head) idle_it(head -> pid);
         time_of_main ++;
         if(head != NULL)head -> rest_time --;
         //if(head != NULL)fprintf(stdout , "%d now!\n" , head -> pid);
@@ -217,6 +233,10 @@ void PSJF(){
                         exit(0);
                     }
                     else {
+                        cpu_set_t mask;
+                        CPU_ZERO(&mask);
+                        CPU_SET(0 , &mask);
+                        sched_setaffinity(pid_child[i], sizeof(cpu_set_t), &mask);
                         idle_it(pid_child[i]);
                         if(head == NULL) start_head(i);
                         else if(rc_process[i][1] >= head -> rest_time) insert_new_job(i);
@@ -265,7 +285,6 @@ void PSJF(){
         }
         if(head) run_it(head->pid);
         timeunit();
-        if(head) idle_it(head -> pid);
         time_of_main ++;
         if(head != NULL)head -> rest_time --;
         //if(head != NULL)fprintf(stdout , "%d now!\n" , head -> pid);
@@ -273,4 +292,5 @@ void PSJF(){
     }
     //result();
 }
+
 
