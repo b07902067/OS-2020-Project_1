@@ -1,16 +1,36 @@
 #define _GNU_SOURCE
 #include<sys/syscall.h>
 #include<sys/time.h>
+#include<stdlib.h>
+#include<string.h>
 #include"sche.h"
 void RR();
 void FIFO();
 void SJF();
 void PSJF();
+typedef struct {
+    char name[33];
+    int ready_time, exec_time;
+} I;
+
+I in_[105];
+
+int cmp(const void *a, const void *b){
+    int fron = ((I*)a) -> ready_time;
+    int back = ((I*)b) -> ready_time;
+    return fron > back;
+}
 
 int main(){
     scanf("%s" , policy);
     scanf("%d" , &num_of_process);
-    for(int i = 0 ; i < num_of_process ; i++) scanf("%s%d%d" , process_name[i] , &rc_process[i][0] , &rc_process[i][1]);
+    for(int i = 0 ; i < num_of_process ; i++) scanf("%s%d%d" , in_[i].name , &in_[i].ready_time , &in_[i].exec_time);
+    qsort(in_ , num_of_process , sizeof(I) , cmp);
+    for(int i = 0 ; i < num_of_process ; i++){
+        strcpy(process_name[i] , in_[i].name);
+        rc_process[i][0] = in_[i].ready_time;
+        rc_process[i][1] = in_[i].exec_time;
+    }
     if(strcmp(policy , "FIFO") == 0) FIFO();
     if(strcmp(policy , "RR") == 0) RR();
     if(strcmp(policy , "SJF") == 0) SJF();
@@ -106,6 +126,7 @@ void FIFO(){
                 else {
                     if(head == NULL) {
                     	start_head(i);
+                        run_it(head->pid);
                     }
                     else {
                     	idle_it(pid_child[i]);
