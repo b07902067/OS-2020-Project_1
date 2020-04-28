@@ -3,6 +3,7 @@
 
 ---
 ### Design
+#### 此程式是在系統只有一個 CPU 的情況下才可以正確運作，當系統有多於一顆核心時，運行的結果會變得無法確定。
 #### 使用 `sched_idle` 暫停 process 和 `sched_other` 喚醒 process 以及 link-list 來實作四種排程方式，link-list的`head` 就是現在可以執行的 child process。
 #### 四種方式都會在新的 child process 開始執行時，先以 `sched_idle` 暫停該 child process ，並進行 link-list 的串接以及順序調換，再使用 `sched_other` 繼續執行當前應該執行的工作，並且在 child  process 結束時，將 link-list 的 head 往後移，使用 `sched_other` 喚醒下一個程式。
 - `FIFO` : 當新的 child process 被 `fork` 後，需要確認目前有沒有還在執行或等待的 process ，若沒有的話將 `head` 設定為新 fork 的 child process ，並開始執行。反之則把新 fork 的 child_process 接在 link-list 的最後。
