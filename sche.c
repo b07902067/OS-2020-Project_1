@@ -11,7 +11,6 @@ int main(){
     scanf("%s" , policy);
     scanf("%d" , &num_of_process);
     for(int i = 0 ; i < num_of_process ; i++) scanf("%s%d%d" , process_name[i] , &rc_process[i][0] , &rc_process[i][1]);
-    
     if(strcmp(policy , "FIFO") == 0) FIFO();
     if(strcmp(policy , "RR") == 0) RR();
     if(strcmp(policy , "SJF") == 0) SJF();
@@ -21,7 +20,7 @@ int main(){
 
 void RR(){
     while(1){
-        //fprintf(stderr, "time : %d\n", time_of_main);
+        //fprintf(stdout, "time : %d\n", time_of_main);
         if(next_index_process < num_of_process){
             for(int i = next_index_process ; i < num_of_process ; i++){
                 if(rc_process[i][0] == time_of_main){
@@ -32,7 +31,7 @@ void RR(){
                         syscall(333 , &end.tv_sec , &end.tv_nsec);
                         pid_t this = getpid();
                         syscall(334 , start.tv_sec , start.tv_nsec , end.tv_sec , end.tv_nsec , this);
-                        fprintf(stderr , "%s %d\n" , process_name[i] , getpid());
+                        fprintf(stdout , "%s %d\n" , process_name[i] , getpid());
                         exit(0);
                     }
                     else {
@@ -86,7 +85,12 @@ void RR(){
 
 
 void FIFO(){
+
     while(1){
+    	/*struct sched_param param;
+        param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+        int set = sched_setscheduler(0 , SCHED_OTHER , &param);*/
+
         for(int i = next_index_process ; i < num_of_process ; i++){
             if(rc_process[i][0] == time_of_main){
                 struct timespec start, end;
@@ -96,15 +100,15 @@ void FIFO(){
                     syscall(333 , &end.tv_sec , &end.tv_nsec);
                     pid_t this = getpid();
                     syscall(334 , start.tv_sec , start.tv_nsec , end.tv_sec , end.tv_nsec , this);
-                    fprintf(stderr , "%s %d\n" , process_name[i] , getpid());
+                    fprintf(stdout , "%s %d\n" , process_name[i] , getpid());
                     exit(0);
                 }
                 else {
-                    struct sched_param param;
-                    param.sched_priority = ;
-                    sched_setscheduler(pid , SCHED_FIFO , &param);
-                    if(head == NULL) start_head(i);
+                    if(head == NULL) {
+                    	start_head(i);
+                    }
                     else {
+                    	idle_it(pid_child[i]);
                         tail -> next = malloc(sizeof(P));
                         (tail -> next) -> previous = tail;
                         tail = tail -> next;
@@ -120,7 +124,9 @@ void FIFO(){
         if (head != NULL && head -> rest_time == 0){
             int ret = wait(NULL);
             head = head -> next;
+            if(head) run_it(head->pid);
         }
+
         timeunit();
         time_of_main ++;
         if (head) head -> rest_time --;
@@ -132,7 +138,7 @@ void FIFO(){
 
 void SJF(){
     while(1){
-        //fprintf(stderr, "time : %d\n", time_of_main);
+        //fprintf(stdout, "time : %d\n", time_of_main);
         if(next_index_process < num_of_process){
             for(int i = next_index_process ; i < num_of_process ; i++){
                 if(rc_process[i][0] == time_of_main){
@@ -143,7 +149,7 @@ void SJF(){
                         syscall(333 , &end.tv_sec , &end.tv_nsec);
                         pid_t this = getpid();
                         syscall(334 , start.tv_sec , start.tv_nsec , end.tv_sec , end.tv_nsec , this);
-                        fprintf(stderr , "%s %d\n" , process_name[i] , getpid());
+                        fprintf(stdout , "%s %d\n" , process_name[i] , getpid());
                         exit(0);
                     }
                     else {
@@ -175,7 +181,7 @@ void SJF(){
 
 void PSJF(){
     while(1){
-        //fprintf(stderr, "time : %d\n", time_of_main);
+        //fprintf(stdout, "time : %d\n", time_of_main);
         if(next_index_process < num_of_process){
             for(int i = next_index_process ; i < num_of_process ; i++){
                 if(rc_process[i][0] == time_of_main){
@@ -186,7 +192,7 @@ void PSJF(){
                         syscall(333 , &end.tv_sec , &end.tv_nsec);
                         pid_t this = getpid();
                         syscall(334 , start.tv_sec , start.tv_nsec , end.tv_sec , end.tv_nsec , this);
-                        fprintf(stderr , "%s %d\n" , process_name[i] , getpid());
+                        fprintf(stdout , "%s %d\n" , process_name[i] , getpid());
                         exit(0);
                     }
                     else {
