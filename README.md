@@ -1,5 +1,4 @@
 # OS_project_1 2020
-####  NOTE: The program is based on 1-processor virtual machine. The result will be uncertain in virtual machine with multiple processors.
 ### install system call and complie kernel
 ##### 1. .c file
 - Copy `kernel_files/proc_time.c` to `linux-{version}/kernel/proc_time.c` 
