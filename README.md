@@ -9,7 +9,7 @@
 obj-y += proc_time.o
 obj-y += proc_print.o
 ```
-#### 3. Add following lines in "`linux-{version}/include/linux/syscalls.h`":
+#### 3. Add following lines in "`linux-{version}/include/linux/syscalls.h`"
 ```
 asmlinkage int sys_proc_time(unsigned long __user *sec, unsigned long __user *nsec);
 asmlinkage int sys_proc_print(unsigned long s, unsigned long sn , unsigned long es , unsigned long en , int pid);
