@@ -1,6 +1,6 @@
 # OS_project_1 2020
 
-### install system call and complie kernel
+## install system call and complie kernel
 #### 1. Copy `kernel_files/proc_time.c` to `linux-{version}/kernel/proc_time.c` and `kernel_files/proc_print.c` to `linux-{version}/kernel/proc_print.c`
 #### 2. Add lines "`obj-y += proc_time.o`"  and "`obj-y += proc_print.o`"in `linux-{version}/kernel/Makefile`
 #### 3. Add following in "`linux-{version}/include/linux/syscalls.h`":
@@ -14,7 +14,7 @@ asmlinkage int sys_proc_print(unsigned long s, unsigned long sn , unsigned long 
 #### 7. reboot
 
 
-### Usage
+## Usage
 ```
 make
 ./sche < FILE
