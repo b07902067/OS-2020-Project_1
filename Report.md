@@ -3,7 +3,7 @@
 
 ---
 ### Design
-#### 為了壁面程式只有在系統只有一個 CPU 的情況下才可以正確運作，使用了 `sched_setaffinity` 函式，將 main process 固定在 1 號 CPU ，而所有的 child process 固定在 0 號 CPU 執行。
+#### 為了避免程式只有在系統只有一個 CPU 的情況下才可以正確運作，使用了 `sched_setaffinity` 函式，將 main process 固定在 1 號 CPU ，而所有的 child process 固定在 0 號 CPU 執行。
 - 這種實作方式也可以順便確保 main process 和 child process 在不同 CPU 上執行，就可以不用考慮 child process 和 main proecss 之間 context switch 的問題。
 #### 使用 `sched_idle` 暫停 process 和 `sched_other` 喚醒 process 以及 link-list 來實作四種排程方式，link-list的`head` 就是現在可以執行的 child process。
 #### 四種方式都會在新的 child process 開始執行時，先以 `sched_idle` 暫停該 child process ，並進行 link-list 的串接以及順序調換，再使用 `sched_other` 繼續執行當前應該執行的工作，並且在 child  process 結束時，將 link-list 的 head 往後移，使用 `sched_other` 喚醒下一個程式。
